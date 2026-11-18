@@ -1,56 +1,73 @@
 # dsh-session-layout
 
-一套让多个 AI（DSH / Codex / Antigravity）在同一个工作区里互不串味的**会话目录排版规范**，DSH Skill 形态。
-配套插件 [dsh-session-delete](https://github.com/wadwaw7/dsh-session-delete) 依赖它做精确删除。
+English | [中文](README.zh.md)
 
-## 它解决什么
+A **session directory layout convention** for workspaces shared by several AI agents
+(DSH / Codex / Antigravity), packaged as a DSH Skill.
 
-一个工作区里同时跑 DSH、Codex、Antigravity 时，会话产物很容易混在一起：目录名撞车、证据到处散、
-删除会话时不敢下手。这套规范给出三条硬约束：
+It is the companion spec for [dsh-session-delete](https://github.com/wadwaw7/dsh-session-delete):
+that plugin deletes a DSH session together with its project folder, and it recognises
+the folder **only** through this convention.
 
-1. **一个对话 = 一个目录**，目录名 `YYYY-MM-DD-HHMM-<中文短主题>`。
-2. **每个目录有 `.session.json`**，写着 `provider` 与 `thread_id`（= DSH 的 `DSH_SESSION_ID`）。
-3. **两个固定文件**：`会话说明.md`、`归档索引.md`；证据、备份、一次性脚本都在目录内。
+## What it fixes
 
-## 与 dsh-session-delete 的配合
+Running DSH, Codex and Antigravity in one workspace quickly produces a mess: colliding
+folder names, evidence files scattered across the root, and nobody dares to delete a
+session because it is unclear what belongs to what. The convention is three hard rules:
 
-插件删除会话时同时清理三处：DSH 会话存储、工作区记录、项目里的会话目录。
-它判断「这个目录属于哪个会话」**只看** `.session.json` 里的 `provider=**dsh**` 与 `thread_id`：
+1. **One conversation, one directory**, named `YYYY-MM-DD-HHMM-<topic>`.
+2. **Every directory carries `.session.json`** with `provider` and `thread_id`
+   (the DSH `DSH_SESSION_ID`).
+3. **Two fixed files** — `会话说明.md` (session notes) and `归档索引.md` (archive index);
+   evidence, backups and one-off scripts stay inside the directory.
 
-| 规范做法 | 删除时的效果 |
+## Working with dsh-session-delete
+
+The delete plugin removes three things at once: the DSH session storage, the workspace
+record, and the session folder inside the project. It decides "which session owns this
+folder" from `.session.json` alone — `provider === "dsh"` **and**
+`thread_id === <session id>`:
+
+| Convention | Effect when deleting |
 | --- | --- |
-| 每个目录写 `.session.json`，`thread_id` 用真实会话 ID | 精确命中所删会话的那一个目录 |
-| 目录名不含会话 ID | 名字撞车也不会误删 |
-| 不同 AI 写各自 `provider` | 别的 AI 的同名目录原样保留 |
-| 工程源码放在宿主目录、不放进会话目录 | 删除会话不波及源码 |
+| Every directory has `.session.json` with the real session id | Exactly one folder is matched |
+| Folder names never embed a session id | Name collisions cannot cause a wrong delete |
+| Each AI writes its own `provider` | Another AI's same-named folder is left untouched |
+| Product source lives in the project directory, not the session folder | Deleting a session never touches source code |
 
-没有 `.session.json` 的目录，插件一律保留、不猜、不乱删。
+A directory without `.session.json` is always kept: the plugin never guesses.
 
-## 安装
+## Install
 
-### 插件市场
+### Plugin marketplace
 
-设置 → 插件市场 → 搜索 `dsh-session-layout` → 安装（市场会把它复制到 `~/.dsh/skills/`）。
+Settings → Plugin Marketplace → search `dsh-session-layout` → Install. The marketplace
+copies it to `~/.dsh/skills/`.
 
-### 手动
+### Manual
 
 ```powershell
 New-Item -ItemType Directory -Force "$env:USERPROFILE\.dsh\skills\dsh-session-layout" | Out-Null
 Copy-Item -Recurse -Force ".\*" "$env:USERPROFILE\.dsh\skills\dsh-session-layout\"
 ```
 
-## 内容
+```bash
+mkdir -p ~/.dsh/skills/dsh-session-layout
+cp -r ./* ~/.dsh/skills/dsh-session-layout/
+```
 
-| 文件 | 作用 |
+## Contents
+
+| File | Purpose |
 | --- | --- |
-| `SKILL.md` | 技能本体：结构、命名、`.session.json` 契约、与删除插件的配合 |
-| `参考/AGENTS.md` | 可直接放进工作区根的多 AI 共用规范 |
-| `模板/会话骨架/` | 新建会话目录时直接复制的骨架（含双核心文件与 `.session.json`） |
+| `SKILL.md` | The skill itself: structure, naming, the `.session.json` contract, deletion integration |
+| `参考/AGENTS.md` | Drop-in workspace-wide rules shared by every agent |
+| `模板/会话骨架/` | Skeleton to copy when starting a new session directory |
 
-## 披露
+## Disclosure
 
-- 无云端依赖，无网络请求，不收集数据。
-- 只读写工作区内的 `会话/` 目录与 `AGENTS.md`。
+- No cloud dependency, no network requests, no data collection.
+- Reads and writes only `会话/` inside the workspace and `AGENTS.md`.
 
 ## License
 

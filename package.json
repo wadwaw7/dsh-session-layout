@@ -1,0 +1,25 @@
+{
+  "name": "dsh-session-layout",
+  "version": "0.1.0",
+  "description": "DSH 会话目录排版规范：一个对话一个目录、双核心文件与 .session.json 元数据，配合 dsh-session-delete 精确删除、减少误删",
+  "type": "module",
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "参考",
+    "模板",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh-plugin",
+    "dsh-skill",
+    "deepseek-harness",
+    "session-layout",
+    "convention"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wadwaw7/dsh-session-layout.git"
+  },
+  "license": "MIT"
+}

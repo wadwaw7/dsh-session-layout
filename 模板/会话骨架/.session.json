@@ -1,0 +1,6 @@
+{
+  "provider": "dsh",
+  "thread_id": "<DSH_SESSION_ID>",
+  "topic": "<主题>",
+  "created_at": "<ISO8601>"
+}
